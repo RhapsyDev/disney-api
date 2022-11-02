@@ -1,9 +1,6 @@
 package com.rhapsydev.alkemy.disney.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -13,6 +10,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "characters")
 public class Character {
 
@@ -30,7 +28,6 @@ public class Character {
 
     private String image;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "character_movie", joinColumns = {@JoinColumn(name = "character_id")}, inverseJoinColumns = {@JoinColumn(name = "movie_id")})
+    @ManyToMany(mappedBy = "characters")
     private Set<Movie> movies = new HashSet<>();
 }

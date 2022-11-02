@@ -15,6 +15,6 @@ public class MovieDto {
     private Date releasedOn;
     private int rating;
     private String image;
-    private List<CharacterBasicDto> characters;
     private GenreDto genre;
+    private List<CharacterBasicDto> characters;
 }

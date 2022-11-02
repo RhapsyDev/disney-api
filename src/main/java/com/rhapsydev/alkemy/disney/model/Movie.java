@@ -1,9 +1,6 @@
 package com.rhapsydev.alkemy.disney.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -16,6 +13,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "movies")
 public class Movie {
     @Id
@@ -37,6 +35,20 @@ public class Movie {
     @JoinColumn(name = "genre_id")
     private Genre genre;
 
-    @ManyToMany(mappedBy = "movies")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "movie_character",
+            joinColumns = {@JoinColumn(name = "movie_id")},
+            inverseJoinColumns = {@JoinColumn(name = "character_id")})
     private Set<Character> characters = new HashSet<>();
+
+    // Utils methods
+    public void addCharacter(Character character) {
+        characters.add(character);
+        character.getMovies().add(this);
+    }
+
+    public void removeCharacter(Character character) {
+        characters.remove(character);
+        character.getMovies().remove(this);
+    }
 }

@@ -1,12 +1,12 @@
 package com.rhapsydev.alkemy.disney.service;
 
 import com.rhapsydev.alkemy.disney.model.Character;
+import com.rhapsydev.alkemy.disney.model.Movie;
 import com.rhapsydev.alkemy.disney.repository.CharacterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +29,7 @@ public class CharacterServiceImpl implements CharacterService {
 
     @Override
     public List<Character> findByName(String name) {
-        return repository.findByName(name);
+        return repository.findByNameContainingIgnoreCase(name);
     }
 
     @Override
@@ -39,8 +39,7 @@ public class CharacterServiceImpl implements CharacterService {
 
     @Override
     public List<Character> findByMovie(Long idMovie) {
-//        return repository.findByMovie(idMovie);
-        return new ArrayList<>(); // TODO implement here
+        return repository.findByMovies(Movie.builder().id(idMovie).build());
     }
 
     @Override

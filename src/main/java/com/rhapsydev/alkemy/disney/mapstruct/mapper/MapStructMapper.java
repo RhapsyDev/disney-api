@@ -11,13 +11,16 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface MapStructMapper {
 
-    List<CharacterBasicDto> charactersToCharacterBasicDTOs(List<Character> characters);
     CharacterDto characterToCharacterDTO(Character character);
     Character characterDtoToCharacter(CharacterDto characterDto);
+    List<CharacterBasicDto> charactersToCharacterBasicDTOs(List<Character> characters);
+    List<CharacterDto> charactersToCharactersDTOs(List<Character> characters);
 
     GenreDto genreToGenreDto(Genre genre);
     List<GenreDto> genresToGenreDTOs(List<Genre> genres);
 
     MovieBasicDto movieToMovieBasicDTO(Movie movie);
-    List<MovieDto> moviesToMovieBasicDTOs(List<Movie> movies);
+    Movie movieDtoToMovie(MovieDto movieDto);
+    List<MovieBasicDto> moviesToMovieBasicDTOs(List<Movie> movies);
+    List<MovieDto> moviesToMovieDTOs(List<Movie> movies);
 }
