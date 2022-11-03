@@ -3,8 +3,6 @@ package com.rhapsydev.alkemy.disney.model;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,13 +18,11 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Title is mandatory")
     private String title;
 
     @Temporal(TemporalType.DATE)
     private Date releasedOn;
 
-    @Size(min = 1, max = 5)
     private int rating;
 
     private String image;
@@ -35,7 +31,7 @@ public class Movie {
     @JoinColumn(name = "genre_id")
     private Genre genre;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany()
     @JoinTable(name = "movie_character",
             joinColumns = {@JoinColumn(name = "movie_id")},
             inverseJoinColumns = {@JoinColumn(name = "character_id")})

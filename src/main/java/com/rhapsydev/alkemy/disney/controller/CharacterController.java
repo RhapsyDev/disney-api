@@ -29,9 +29,7 @@ public class CharacterController {
 
     @GetMapping("{id}")
     public ResponseEntity<CharacterDto> getCharacterDetails(@PathVariable Long id) {
-        Character characterFromDb = characterService.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Not found Character with id = " + id));
-        return new ResponseEntity<>(mapper.characterToCharacterDTO(characterFromDb), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.characterToCharacterDTO(characterService.findById(id)), HttpStatus.OK);
     }
 
     @GetMapping(params = "name")
@@ -67,22 +65,17 @@ public class CharacterController {
     @PostMapping
     public ResponseEntity<CharacterDto> create(@Valid @RequestBody CharacterDto characterDto) {
         Character newCharacter = characterService.save(mapper.characterDtoToCharacter(characterDto));
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.characterToCharacterDTO(newCharacter));
+        return new ResponseEntity<>(mapper.characterToCharacterDTO(newCharacter), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CharacterDto> update(@Valid @RequestBody CharacterDto characterDto, @PathVariable Long id) {
-        characterService.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Unable to found Character with id = " + id));
-        Character updatedCharacter = characterService.save(mapper.characterDtoToCharacter(characterDto));
+        Character updatedCharacter = characterService.update(mapper.characterDtoToCharacter(characterDto), id);
         return ResponseEntity.ok(mapper.characterToCharacterDTO(updatedCharacter));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
-        characterService.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Unable to found Character with id = " + id));
         characterService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -14,13 +14,11 @@ public interface MapStructMapper {
     CharacterDto characterToCharacterDTO(Character character);
     Character characterDtoToCharacter(CharacterDto characterDto);
     List<CharacterBasicDto> charactersToCharacterBasicDTOs(List<Character> characters);
-    List<CharacterDto> charactersToCharactersDTOs(List<Character> characters);
 
     GenreDto genreToGenreDto(Genre genre);
     List<GenreDto> genresToGenreDTOs(List<Genre> genres);
 
-    MovieBasicDto movieToMovieBasicDTO(Movie movie);
+    MovieDto movieToMovieDTO(Movie movie);
     Movie movieDtoToMovie(MovieDto movieDto);
     List<MovieBasicDto> moviesToMovieBasicDTOs(List<Movie> movies);
-    List<MovieDto> moviesToMovieDTOs(List<Movie> movies);
 }

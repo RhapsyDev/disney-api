@@ -9,7 +9,7 @@ public interface CharacterService {
 
     List<Character> findAll();
 
-    Optional<Character> findById(Long id);
+    Character findById(Long id);
 
     List<Character> findByName(String name);
 
@@ -18,6 +18,8 @@ public interface CharacterService {
     List<Character> findByMovie(Long idMovie);
 
     Character save(Character character);
+
+    Character update(Character character, Long id);
 
     void delete(Long id);
 }

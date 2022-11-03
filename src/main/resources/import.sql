@@ -12,9 +12,10 @@ INSERT INTO CHARACTERS (id, name , image, age, weight, history) VALUES (6, 'Mula
 INSERT INTO CHARACTERS (id, name , image, age, weight, history) VALUES (7, 'Minnie Mouse', 'image-url7', 20, 30.3, 'History 7');
 
 INSERT INTO MOVIES (id, title, image, released_on, rating, genre_id) VALUES (1, 'Coco', 'movie-url1', DATE '1991-09-23', 5, 2 );
-INSERT INTO MOVIES (id, title, image, released_on, rating, genre_id) VALUES (2, 'El Rey Leon', 'movie-url1', DATE '2022-10-17', 3, 1 );
+INSERT INTO MOVIES (id, title, image, released_on, rating, genre_id) VALUES (2, 'Avengers Endgame', 'movie-url1', DATE '2019-10-17', 3, 1 );
 INSERT INTO MOVIES (id, title, image, released_on, rating, genre_id) VALUES (3, 'Encanto', 'movie-url1', DATE '2005-03-07', 2, 4 );
 INSERT INTO MOVIES (id, title, image, released_on, rating, genre_id) VALUES (4, '101 Dalmatas', 'movie-url1', DATE '1999-09-15', 5, 4 );
+INSERT INTO MOVIES (id, title, image, released_on, rating, genre_id) VALUES (5, 'Avengers Infinity War', 'movie-url2', DATE '2012-10-17', 4.5, 1 );
 
 INSERT INTO MOVIE_CHARACTER (movie_id, character_id) VALUES ( 4, 1 );
 INSERT INTO MOVIE_CHARACTER (movie_id, character_id) VALUES ( 1, 1 );
