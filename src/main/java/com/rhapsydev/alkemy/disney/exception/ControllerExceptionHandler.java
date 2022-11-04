@@ -5,8 +5,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-//import org.springframework.security.authentication.BadCredentialsException;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -24,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class ControllerExceptionHandler extends ResponseEntityExceptionHandler{
+public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     // handleHttpMediaTypeNotSupported : triggers when the JSON is invalid
     @Override

@@ -26,7 +26,7 @@ public class CharacterServiceImpl implements CharacterService {
 
     @Override
     public Character findById(Long id) {
-        return characterRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found Character with id = " + id));
+        return characterRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Character not found with id = " + id));
     }
 
     @Override
