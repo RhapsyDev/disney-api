@@ -3,17 +3,14 @@ package com.rhapsydev.alkemy.disney.service;
 import com.rhapsydev.alkemy.disney.model.Character;
 import com.rhapsydev.alkemy.disney.model.Movie;
 import com.rhapsydev.alkemy.disney.repository.CharacterRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import com.rhapsydev.alkemy.disney.repository.MovieRepository;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static com.rhapsydev.alkemy.disney.util.RepositoryDataUtil.SINGLE_CHARACTER;
 import static com.rhapsydev.alkemy.disney.util.RepositoryDataUtil.*;
@@ -27,6 +24,9 @@ class CharacterServiceImplTest {
 
     @Mock
     CharacterRepository characterRepository;
+
+    @Mock
+    MovieRepository movieRepository;
 
     @InjectMocks
     CharacterServiceImpl characterService;
@@ -52,11 +52,11 @@ class CharacterServiceImplTest {
     @Test
     void findById() {
         when(characterRepository.findById(anyLong())).thenReturn(Optional.of(SINGLE_CHARACTER_2));
-        Optional<Character> singleCharacter = characterService.findById(10L);
+        Character singleCharacter = characterService.findById(10L);
 
         assertNotNull(singleCharacter);
-        assertEquals(SINGLE_CHARACTER_2.getId(), singleCharacter.orElseThrow().getId());
-        assertEquals(SINGLE_CHARACTER_2.getWeight(), singleCharacter.orElseThrow().getWeight());
+        assertEquals(SINGLE_CHARACTER_2.getId(), singleCharacter.getId());
+        assertEquals(SINGLE_CHARACTER_2.getWeight(), singleCharacter.getWeight());
 
         verify(characterRepository).findById(anyLong());
     }
@@ -126,13 +126,30 @@ class CharacterServiceImplTest {
     }
 
     @Test
+    void update() {
+        when(characterRepository.findById(anyLong())).thenReturn(Optional.of(SINGLE_CHARACTER));
+        when(characterRepository.save(any(Character.class))).thenReturn(SINGLE_CHARACTER);
+
+        Character updatedCharacter = characterService.update(SINGLE_CHARACTER, anyLong());
+
+        assertNotNull(updatedCharacter);
+        assertEquals(SINGLE_CHARACTER.getId(), updatedCharacter.getId());
+        assertEquals(SINGLE_CHARACTER.getImage(), updatedCharacter.getImage());
+        assertEquals(SINGLE_CHARACTER.getMovies().size(), updatedCharacter.getMovies().size());
+
+        verify(characterRepository).findById(anyLong());
+        verify(characterRepository, times(1)).save(any(Character.class));
+    }
+
+    @Test
     void delete() {
-        long characterId = 8L;
-        doNothing().when(characterRepository).deleteById(characterId);
+        long characterId = 1L;
+        when(characterRepository.findById(characterId)).thenReturn(Optional.ofNullable(SINGLE_CHARACTER));
+        doNothing().when(characterRepository).delete(any(Character.class));
 
         characterService.delete(characterId);
 
-        verify(characterRepository, times(1)).deleteById(anyLong());
+        verify(movieRepository, atLeastOnce()).saveAll(anyIterable());
+        verify(characterRepository, atLeastOnce()).delete(any(Character.class));
     }
-
 }

@@ -59,7 +59,7 @@ class CharacterControllerTest {
 
     @Test
     void shouldFetchOneCharacterById() throws Exception {
-        when(characterService.findById(anyLong())).thenReturn(Optional.ofNullable(SINGLE_CHARACTER));
+        when(characterService.findById(anyLong())).thenReturn(SINGLE_CHARACTER);
 
         mockMvc.perform(get("/characters/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -140,8 +140,8 @@ class CharacterControllerTest {
         SINGLE_CHARACTER.setName("Aladdin updated");
         SINGLE_CHARACTER.setMovies(new HashSet<>());
 
-        when(characterService.findById(1L)).thenReturn(Optional.of(SINGLE_CHARACTER));
-        when(characterService.save(any(Character.class))).thenReturn(SINGLE_CHARACTER);
+        when(characterService.findById(1L)).thenReturn(SINGLE_CHARACTER);
+        when(characterService.update(any(Character.class), anyLong())).thenReturn(SINGLE_CHARACTER);
 
         mockMvc.perform(put("/characters/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -152,35 +152,17 @@ class CharacterControllerTest {
                 .andExpect(jsonPath("$.age", is(SINGLE_CHARACTER.getAge())))
                 .andExpect(jsonPath("$.movies", hasSize(0)));
 
-        verify(characterService).findById(anyLong());
-        verify(characterService).save(any(Character.class));
+        verify(characterService).update(any(), anyLong());
     }
 
     @Test
     void shouldDeleteCharacterAndReturnEmpty() throws Exception {
-        when(characterService.findById(anyLong())).thenReturn(Optional.of(SINGLE_CHARACTER));
+        when(characterService.findById(anyLong())).thenReturn(SINGLE_CHARACTER);
 
         mockMvc.perform(delete("/characters/{id}", 1L))
                 .andExpect(status().isNoContent());
 
-        verify(characterService).findById(1L);
         verify(characterService).delete(1L);
-    }
-
-    @Disabled("Disable until throw exception is solved")
-    @Test
-    void shouldThrowExceptionWhenFindInvalidCharacter() throws Exception {
-//        SINGLE_CHARACTER.setId(100L);
-        when(characterService.findById(100L)).thenReturn(Optional.of(SINGLE_CHARACTER));
-
-        mockMvc.perform(get("/characters/{id}", 100L)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(SINGLE_CHARACTER))
-                        )
-                .andExpect(status().isNotFound())
-//                .andExpect(result -> assertTrue(
-//                        result.getResolvedException() instanceof MethodArgumentNotValidException))
-                        ;
     }
 
     @Test
