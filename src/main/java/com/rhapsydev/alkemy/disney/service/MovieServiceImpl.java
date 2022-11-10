@@ -72,7 +72,7 @@ public class MovieServiceImpl implements MovieService {
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid character with id " + characterId));
 
         movie.addCharacter(character);
-        movieRepository.save(movie);
+        //movieRepository.save(movie); // not needed as transactional is used
     }
 
     @Override
@@ -83,6 +83,5 @@ public class MovieServiceImpl implements MovieService {
                 .orElseThrow(() -> new ResourceNotFoundException("Unable to find character with id " + characterId + " in movie " + movieId));
 
         movie.removeCharacter(character);
-        movieRepository.save(movie);
     }
 }

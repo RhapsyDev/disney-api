@@ -59,9 +59,8 @@ public class CharacterServiceImpl implements CharacterService {
     public void delete(Long id) {
         Character character = this.findById(id);
         List<Movie> moviesByCharacter = movieRepository.findByCharacters(character);
-
         moviesByCharacter.forEach(movie -> movie.removeCharacter(character));
-        movieRepository.saveAll(moviesByCharacter);
+
         characterRepository.delete(character);
     }
 }

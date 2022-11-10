@@ -5,6 +5,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -84,6 +86,18 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+    // handleNoHandlerFoundException : triggers when the handler method is invalid
+    @Override
+    public ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        List<String> details = new ArrayList<>();
+        details.add(String.format("Could not find the %s method for URL %s", ex.getHttpMethod(), ex.getRequestURL()));
+        ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Method Not Found", details);
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
+    }
+
     // handleMethodArgumentTypeMismatch : triggers when a parameter's type does not match
     @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ErrorDetails> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
@@ -121,7 +135,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
-/*
     @ExceptionHandler(value = {EmailAlreadyInUseException.class})
     public ResponseEntity<ErrorDetails> handleEmailAlreadyInUseException(EmailAlreadyInUseException ex) {
 
@@ -154,19 +167,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
-*/
-
-    // handleNoHandlerFoundException : triggers when the handler method is invalid
-    @Override
-    public ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-
-        List<String> details = new ArrayList<>();
-        details.add(String.format("Could not find the %s method for URL %s", ex.getHttpMethod(), ex.getRequestURL()));
-        ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Method Not Found", details);
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-
-    }
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
     public ResponseEntity<ErrorDetails> IllegalArgumentException(IllegalArgumentException ex) {
@@ -178,6 +178,5 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 
     }
-
 }
 

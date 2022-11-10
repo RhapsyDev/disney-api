@@ -3,7 +3,6 @@ package com.rhapsydev.alkemy.disney.service;
 import com.rhapsydev.alkemy.disney.model.Movie;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.data.domain.Sort.Direction;
 
@@ -21,7 +20,7 @@ public interface MovieService {
 
     Movie save(Movie movie);
 
-    Movie update(Movie movie,  Long id);
+    Movie update(Movie movie, Long id);
 
     void delete(Long id);
 

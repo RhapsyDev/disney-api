@@ -3,7 +3,6 @@ package com.rhapsydev.alkemy.disney.service;
 import com.rhapsydev.alkemy.disney.model.Character;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CharacterService {
 
