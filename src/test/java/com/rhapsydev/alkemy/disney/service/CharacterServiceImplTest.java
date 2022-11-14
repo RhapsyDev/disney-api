@@ -149,7 +149,7 @@ class CharacterServiceImplTest {
 
         characterService.delete(characterId);
 
-        verify(movieRepository, atLeastOnce()).saveAll(anyIterable());
+        verify(movieRepository, atLeastOnce()).findByCharacters(any(Character.class));
         verify(characterRepository, atLeastOnce()).delete(any(Character.class));
     }
 }

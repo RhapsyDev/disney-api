@@ -5,28 +5,30 @@ import com.rhapsydev.alkemy.disney.mapstruct.mapper.MapStructMapperImpl;
 import com.rhapsydev.alkemy.disney.model.Character;
 import com.rhapsydev.alkemy.disney.service.CharacterService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 
 import static com.rhapsydev.alkemy.disney.util.RepositoryDataUtil.*;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,20 +43,34 @@ class CharacterControllerTest {
     @MockBean
     private CharacterService characterService;
 
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
+    private Jwt jwt;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
+
+        // For Spring Security
+        jwt = Jwt.withTokenValue("token")
+                .header("alg", "RS256")
+                .claim("sub", "username")
+                .claim("scope", "read")
+                .build();
     }
 
     @Test
     void shouldFetchAllCharacters() throws Exception {
         when(characterService.findAll()).thenReturn(ALL_CHARACTERS);
 
-        mockMvc.perform(get("/characters").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/characters").contentType(MediaType.APPLICATION_JSON)
+                        .with(jwt().jwt(jwt)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(ALL_CHARACTERS.size())));
+
+        assertThat(jwt.getTokenValue(), equalTo("token"));
+        assertThat(jwt.getHeaders().get("alg"), equalTo("RS256"));
+        assertThat(jwt.getSubject(), equalTo("username"));
+        assertThat(jwt.getClaims().get("scope"), equalTo("read"));
     }
 
     @Test
@@ -62,6 +78,7 @@ class CharacterControllerTest {
         when(characterService.findById(anyLong())).thenReturn(SINGLE_CHARACTER);
 
         mockMvc.perform(get("/characters/{id}", 1L)
+                        .with(jwt().jwt(jwt))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(SINGLE_CHARACTER)))
                 .andExpect(status().isOk())
@@ -76,7 +93,8 @@ class CharacterControllerTest {
 
         mockMvc.perform(get("/characters?name={name}", anyString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(SAME_NAME_CHARACTERS)))
+                        .content(objectMapper.writeValueAsString(SAME_NAME_CHARACTERS))
+                        .with(jwt().jwt(jwt)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(SAME_NAME_CHARACTERS.size())))
@@ -90,7 +108,8 @@ class CharacterControllerTest {
 
         mockMvc.perform(get("/characters?age={age}", 30)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(SINGLE_CHARACTER)))
+                        .content(objectMapper.writeValueAsString(SINGLE_CHARACTER))
+                        .with(jwt().jwt(jwt)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -103,7 +122,8 @@ class CharacterControllerTest {
 
         mockMvc.perform(get("/characters?movies={id}", 3L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(SAME_MOVIE_CHARACTERS)))
+                        .content(objectMapper.writeValueAsString(SAME_MOVIE_CHARACTERS))
+                        .with(jwt().jwt(jwt)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -118,7 +138,7 @@ class CharacterControllerTest {
         SINGLE_CHARACTER.setId(null);
         SINGLE_CHARACTER.setName("Aladdin 2022");
 
-        when(characterService.save(any(Character.class))).then(invocation -> {
+        when(characterService.save(ArgumentMatchers.any(Character.class))).then(invocation -> {
             Character newCharacter = invocation.getArgument(0);
             newCharacter.setId(10L);
             return newCharacter;
@@ -126,7 +146,8 @@ class CharacterControllerTest {
 
         mockMvc.perform(post("/characters")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(SINGLE_CHARACTER)))
+                        .content(objectMapper.writeValueAsString(SINGLE_CHARACTER))
+                        .with(jwt().jwt(jwt)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(10)))
@@ -141,11 +162,12 @@ class CharacterControllerTest {
         SINGLE_CHARACTER.setMovies(new HashSet<>());
 
         when(characterService.findById(1L)).thenReturn(SINGLE_CHARACTER);
-        when(characterService.update(any(Character.class), anyLong())).thenReturn(SINGLE_CHARACTER);
+        when(characterService.update(ArgumentMatchers.any(Character.class), anyLong())).thenReturn(SINGLE_CHARACTER);
 
         mockMvc.perform(put("/characters/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(SINGLE_CHARACTER)))
+                        .content(objectMapper.writeValueAsString(SINGLE_CHARACTER))
+                        .with(jwt().jwt(jwt)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name", is("Aladdin updated")))
@@ -159,7 +181,7 @@ class CharacterControllerTest {
     void shouldDeleteCharacterAndReturnEmpty() throws Exception {
         when(characterService.findById(anyLong())).thenReturn(SINGLE_CHARACTER);
 
-        mockMvc.perform(delete("/characters/{id}", 1L))
+        mockMvc.perform(delete("/characters/{id}", 1L).with(jwt().jwt(jwt)))
                 .andExpect(status().isNoContent());
 
         verify(characterService).delete(1L);
@@ -171,7 +193,8 @@ class CharacterControllerTest {
 
         mockMvc.perform(put("/characters/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(SINGLE_CHARACTER)))
+                        .content(objectMapper.writeValueAsString(SINGLE_CHARACTER))
+                        .with(jwt().jwt(jwt)))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof MethodArgumentNotValidException));
