@@ -1,5 +1,6 @@
 package com.rhapsydev.alkemy.disney.config;
 
+import com.rhapsydev.alkemy.disney.model.User;
 import com.rhapsydev.alkemy.disney.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,15 +12,15 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository repository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<com.rhapsydev.alkemy.disney.model.User> user = repository.findByEmail(email);
+        Optional<User> user = repository.findByEmail(email);
 
         return new org.springframework.security.core.userdetails.User(user.orElseThrow().getEmail(),
                 user.orElseThrow().getPassword(),

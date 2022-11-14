@@ -22,3 +22,5 @@ INSERT INTO MOVIE_CHARACTER (movie_id, character_id) VALUES ( 1, 1 );
 INSERT INTO MOVIE_CHARACTER (movie_id, character_id) VALUES ( 2, 6 );
 INSERT INTO MOVIE_CHARACTER (movie_id, character_id) VALUES ( 3, 4 );
 INSERT INTO MOVIE_CHARACTER (movie_id, character_id) VALUES ( 3, 2 );
+
+--INSERT INTO USERS (id, email, password) VALUES ( 1, "jhasepulveda@gmail.com", "$2a$10$EZgjuvax9Ii1VDdSf7m83u3gZhLUqyxVefme7AMeBNvVUTI/QkVKm" );

@@ -7,8 +7,10 @@ import com.rhapsydev.alkemy.disney.model.User;
 import com.rhapsydev.alkemy.disney.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,11 +34,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Authentication authenticate(UserDto user) {
-        return null;
-    }
-
-    @Override
     public void saveUser(UserDto userDto) {
         checkEmailAvailability(userDto.getEmail());
         User user = User.builder()
@@ -48,8 +45,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String logInUser(UserDto user) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-        return tokenService.generateToken(authentication);
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+            return tokenService.generateToken(authentication);
+
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Incorrect email and / or password");
+        }
     }
 }

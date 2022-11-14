@@ -1,13 +1,13 @@
 package com.rhapsydev.alkemy.disney.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity(name = "users")
 public class User {

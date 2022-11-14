@@ -6,11 +6,8 @@ import com.rhapsydev.alkemy.disney.mapstruct.dto.MovieDto;
 import com.rhapsydev.alkemy.disney.mapstruct.mapper.MapStructMapper;
 import com.rhapsydev.alkemy.disney.model.Movie;
 import com.rhapsydev.alkemy.disney.service.MovieService;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,10 +21,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.data.domain.Sort.Direction;
-
-
-@OpenAPIDefinition(info = @Info(title = "Disney API", description = "REST API which provides information from Disney Movies and Characters. (As part of Alkemy Java Challenge)", version = "v1",
-        license = @License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0")))
 
 @RequiredArgsConstructor
 @RestController

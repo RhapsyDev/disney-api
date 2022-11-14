@@ -7,8 +7,6 @@ public interface UserService {
 
     void checkEmailAvailability(String email);
 
-    Authentication authenticate(UserDto user);
-
     void saveUser(UserDto userDto);
 
     String logInUser(UserDto user);
